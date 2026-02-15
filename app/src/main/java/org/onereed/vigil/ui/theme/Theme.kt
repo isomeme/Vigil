@@ -1,6 +1,6 @@
 @file:Suppress("Unused", "SameParameterValue")
 
-package org.helios.vigil.ui.theme
+package org.onereed.vigil.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.layout.fillMaxSize

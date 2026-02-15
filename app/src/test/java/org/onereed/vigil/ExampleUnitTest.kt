@@ -1,4 +1,4 @@
-package org.helios.vigil
+package org.onereed.vigil
 
 import org.junit.Assert.*
 import org.junit.Test

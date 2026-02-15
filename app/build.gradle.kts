@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-  namespace = "org.helios.vigil"
+  namespace = "org.onereed.vigil"
   compileSdk { version = release(36) }
 
   defaultConfig {
-    applicationId = "org.helios.vigil"
+    applicationId = "org.onereed.vigil"
     minSdk = 26
     targetSdk = 36
     versionCode = 1

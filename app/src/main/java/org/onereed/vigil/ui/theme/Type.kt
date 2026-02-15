@@ -1,4 +1,4 @@
-package org.helios.vigil.ui.theme
+package org.onereed.vigil.ui.theme
 
 import androidx.compose.material3.Typography
 
