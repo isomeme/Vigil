@@ -1,6 +1,8 @@
 plugins {
-  alias(libs.plugins.android.application)
-  alias(libs.plugins.kotlin.compose)
+  alias(libs.plugins.androidApplicationPlugin)
+  alias(libs.plugins.hiltAndroidPlugin)
+  alias(libs.plugins.kotlinComposePlugin)
+  alias(libs.plugins.kspPlugin)
 }
 
 android {
@@ -58,21 +60,30 @@ android {
 dependencies {
 
   // Required for Java 8+ APIs on API levels < 33
+
   coreLibraryDesugaring(libs.desugarJdkLibsNio)
 
-  implementation(libs.androidx.core.ktx)
-  implementation(libs.androidx.lifecycle.runtime.ktx)
-  implementation(libs.androidx.activity.compose)
-  implementation(platform(libs.androidx.compose.bom))
-  implementation(libs.androidx.compose.ui)
-  implementation(libs.androidx.compose.ui.graphics)
-  implementation(libs.androidx.compose.ui.tooling.preview)
-  implementation(libs.androidx.compose.material3)
+  // Hilt
+
+  implementation(libs.bundles.hiltRuntime)
+  ksp(libs.hiltAndroidCompilerKsp)
+
+  // AndroidX and Compose
+
+  implementation(libs.androidxCoreKtx)
+  implementation(libs.androidxLifecycleRuntimeKtx)
+  implementation(libs.androidxActivityCompose)
+
+  implementation(platform(libs.composeBom))
+  implementation(libs.bundles.composeBomRuntime)
+
+  // Testing and debug
+
   testImplementation(libs.junit)
-  androidTestImplementation(libs.androidx.junit)
-  androidTestImplementation(libs.androidx.espresso.core)
-  androidTestImplementation(platform(libs.androidx.compose.bom))
-  androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-  debugImplementation(libs.androidx.compose.ui.tooling)
-  debugImplementation(libs.androidx.compose.ui.test.manifest)
+  androidTestImplementation(libs.androidxJunit)
+  androidTestImplementation(libs.androidxEspressoCore)
+  androidTestImplementation(platform(libs.composeBom))
+  androidTestImplementation(libs.composeUiTestJunit4)
+  debugImplementation(libs.composeUiTooling)
+  debugImplementation(libs.androidxComposeUiTestManifest)
 }
