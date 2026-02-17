@@ -18,19 +18,48 @@ android {
   }
 
   buildTypes {
-    release {
-      isMinifyEnabled = false
-      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    val commonProguardFiles =
+      listOf(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+
+    getByName("release") {
+      versionNameSuffix = ""
+
+      isMinifyEnabled = true
+      isShrinkResources = true
+      setProguardFiles(commonProguardFiles)
+
+      ndk {
+        debugSymbolLevel = "FULL"
+      }
+    }
+
+    getByName("debug") { versionNameSuffix = " (debug)" }
+
+    create("staging") {
+      versionNameSuffix = " (staging)"
+
+      initWith(getByName("debug"))
+      isDebuggable = false
+      isMinifyEnabled = true
+      isShrinkResources = true
+      setProguardFiles(commonProguardFiles)
     }
   }
+
   compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    isCoreLibraryDesugaringEnabled = true
   }
+
   buildFeatures { compose = true }
 }
 
 dependencies {
+
+  // Required for Java 8+ APIs on API levels < 33
+  coreLibraryDesugaring(libs.desugarJdkLibsNio)
+
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(libs.androidx.activity.compose)
