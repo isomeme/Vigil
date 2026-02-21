@@ -30,9 +30,7 @@ android {
       isShrinkResources = true
       setProguardFiles(commonProguardFiles)
 
-      ndk {
-        debugSymbolLevel = "FULL"
-      }
+      ndk { debugSymbolLevel = "FULL" }
     }
 
     getByName("debug") { versionNameSuffix = " (debug)" }
@@ -54,7 +52,10 @@ android {
     isCoreLibraryDesugaringEnabled = true
   }
 
-  buildFeatures { compose = true }
+  buildFeatures {
+    buildConfig = true
+    compose = true
+  }
 }
 
 dependencies {
@@ -76,6 +77,9 @@ dependencies {
 
   implementation(platform(libs.composeBom))
   implementation(libs.bundles.composeBomRuntime)
+
+  // Logging
+  implementation(libs.timber)
 
   // Testing and debug
 
