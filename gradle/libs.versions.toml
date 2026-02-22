@@ -21,7 +21,7 @@ kspPluginVersion = "2.3.4"
 
 # Common across two or more of lib, plugin, and ksp
 androidxHiltCommonVersion = "1.3.0"
-hiltCommonVersion = "2.59.1"
+hiltCommonVersion = "2.59.2"
 
 [libraries]
 androidxActivityCompose = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
