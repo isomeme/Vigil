@@ -67,27 +67,31 @@ dependencies {
   // Hilt
 
   implementation(libs.bundles.hiltRuntime)
-  ksp(libs.hiltAndroidCompilerKsp)
+  ksp(libs.bundles.hiltKsp)
 
   // AndroidX and Compose
 
+  implementation(libs.androidxActivityCompose)
   implementation(libs.androidxCoreKtx)
   implementation(libs.androidxLifecycleRuntimeKtx)
-  implementation(libs.androidxActivityCompose)
+  implementation(libs.androidxWorkRuntime)
 
   implementation(platform(libs.composeBom))
   implementation(libs.bundles.composeBomRuntime)
 
   // Logging
+
   implementation(libs.timber)
 
   // Testing and debug
 
   testImplementation(libs.junit)
-  androidTestImplementation(libs.androidxJunit)
-  androidTestImplementation(libs.androidxEspressoCore)
+
   androidTestImplementation(platform(libs.composeBom))
+  androidTestImplementation(libs.androidxEspressoCore)
+  androidTestImplementation(libs.androidxJunit)
   androidTestImplementation(libs.composeUiTestJunit4)
-  debugImplementation(libs.composeUiTooling)
+
   debugImplementation(libs.androidxComposeUiTestManifest)
+  debugImplementation(libs.composeUiTooling)
 }
