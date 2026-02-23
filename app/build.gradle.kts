@@ -62,7 +62,7 @@ dependencies {
 
   // Required for Java 8+ APIs on API levels < 33
 
-  coreLibraryDesugaring(libs.desugarJdkLibsNio)
+  coreLibraryDesugaring(libs.desugarLib)
 
   // Hilt
 
@@ -71,27 +71,27 @@ dependencies {
 
   // AndroidX and Compose
 
-  implementation(libs.androidxActivityCompose)
-  implementation(libs.androidxCoreKtx)
-  implementation(libs.androidxLifecycleRuntimeKtx)
-  implementation(libs.androidxWorkRuntime)
+  implementation(libs.activityComposeLib)
+  implementation(libs.coreKtxLib)
+  implementation(libs.lifecycleLib)
+  implementation(libs.workLib)
 
-  implementation(platform(libs.composeBom))
+  implementation(platform(libs.composeBomLib))
   implementation(libs.bundles.composeBomRuntime)
 
   // Logging
 
-  implementation(libs.timber)
+  implementation(libs.timberLib)
 
   // Testing and debug
 
-  testImplementation(libs.junit)
+  testImplementation(libs.junitLib)
 
-  androidTestImplementation(platform(libs.composeBom))
-  androidTestImplementation(libs.androidxEspressoCore)
-  androidTestImplementation(libs.androidxJunit)
-  androidTestImplementation(libs.composeUiTestJunit4)
+  androidTestImplementation(platform(libs.composeBomLib))
+  androidTestImplementation(libs.espressoCoreLib)
+  androidTestImplementation(libs.androidxJunitLib)
+  androidTestImplementation(libs.uiTestJunit4Lib)
 
-  debugImplementation(libs.androidxComposeUiTestManifest)
-  debugImplementation(libs.composeUiTooling)
+  debugImplementation(libs.uiTestManifestLib)
+  debugImplementation(libs.uiToolingLib)
 }

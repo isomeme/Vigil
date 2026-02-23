@@ -75,8 +75,20 @@
 
 
 
-\n
-\n  <path
+
+\n  
+\n  <g
+   id="layer2"
+   style="stroke:#133466;stroke-opacity:1;fill:#133466;fill-opacity:1">
+  <rect
+     style="fill:#133466;fill-opacity:1;stroke:#133466;stroke-width:24.1674;stroke-opacity:1"
+     id="rect6717"
+     width="83.832588"
+     height="83.832573"
+     x="12.083708"
+     y="12.083708" />
+</g>
+<path
    d="m 53,66 h 2 v 5 h -2 z"
    fill="#222222"
    id="path4"
@@ -93,15 +105,19 @@
    style="fill:url(#radialGradient1233);fill-opacity:1;stroke-width:5.33331" />
 
 
-\n
-\n
 
-\n
-\n
-\n
+
+\n  
+\n  
+
+\n  
+\n  
+\n  
 \n<path
    id="rect995"
    style="fill:url(#linearGradient1197);fill-opacity:1;stroke-width:15.3894"
-   d="m 44,74.209829 c 3.868242,-7.271196 19.819365,-3.673691 20,0 V 108 H 44 Z"
-    />
+   d="m 44,74.209829 c 3.868242,-7.271196 19.819365,-3.673691 20,0 V 108 H 44 Z" />
+<g
+   id="layer1"
+   style="display:inline;fill:none;stroke:#133466;stroke-opacity:1" />
 </svg>
