@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
     setContent {
       VigilTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          HomeScreen(modifier = Modifier.padding(innerPadding))
+          TimerScreen(modifier = Modifier.padding(innerPadding))
         }
       }
     }
