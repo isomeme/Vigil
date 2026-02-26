@@ -6,33 +6,27 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 @HiltViewModel
-class TimerViewModel @Inject constructor(
-    private val workManager: WorkManager
-) : ViewModel() {
+class TimerViewModel @Inject constructor(private val workManager: WorkManager) : ViewModel() {
 
-    // Observe progress using the Unique Work ID
-    val timerProgress: Flow<Int?> = workManager
-        .getWorkInfosForUniqueWorkFlow("unique_timer")
-        .map { it.firstOrNull()?.progress?.getInt("seconds", 0) }
-
-    fun startTimer() {
-        val request = OneTimeWorkRequestBuilder<TimerWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .build()
-
-        workManager.enqueueUniqueWork(
-            "unique_timer",
-            ExistingWorkPolicy.REPLACE,
-            request
-        )
+  // Observe progress using the Unique Work ID
+  val timerProgress: Flow<Int?> =
+    workManager.getWorkInfosForUniqueWorkFlow(UNIQUE_WORK_NAME).map {
+      it.firstOrNull()?.progress?.getInt("seconds", 0)
     }
 
-    fun stopTimer() {
-        workManager.cancelUniqueWork("unique_timer")
-    }
+  fun startTimer() {
+    val request =
+      OneTimeWorkRequestBuilder<TimerWorker>()
+        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+        .build()
+
+    workManager.enqueueUniqueWork(UNIQUE_WORK_NAME, ExistingWorkPolicy.REPLACE, request)
+  }
+
+  fun stopTimer() = workManager.cancelUniqueWork(UNIQUE_WORK_NAME)
 }

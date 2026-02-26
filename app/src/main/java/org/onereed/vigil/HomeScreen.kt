@@ -24,7 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 import org.onereed.vigil.ui.theme.VigilTheme
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen() {
   val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
 
   val animatedAlpha by
@@ -39,12 +39,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
       label = "alpha animation",
     )
 
-  StatelessHomeScreen(modifier = modifier, animatedAlpha = animatedAlpha)
+  StatelessHomeScreen(animatedAlpha = animatedAlpha)
 }
 
 @Composable
-fun StatelessHomeScreen(modifier: Modifier, animatedAlpha: Float) {
-  Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+fun StatelessHomeScreen(animatedAlpha: Float) {
+  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
     Image(
       modifier = Modifier.fillMaxSize().graphicsLayer { alpha = animatedAlpha },
       painter = painterResource(id = R.drawable.fog_circle),
