@@ -79,6 +79,10 @@ dependencies {
   implementation(platform(libs.composeBomLib))
   implementation(libs.bundles.composeBomRuntime)
 
+  // Accompanist permissions
+
+  implementation(libs.accompanistPermissionsLib)
+
   // Logging
 
   implementation(libs.timberLib)

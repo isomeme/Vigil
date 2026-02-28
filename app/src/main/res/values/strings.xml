@@ -3,4 +3,8 @@
     <string name="timer_channel_name">Timer</string>
     <string name="timer_channel_description">Timer notifications</string>
     <string name="timer_running">Timer running</string>
+    <string name="notification_permission_rationale">Please allow notifications.</string>
+    <string name="notification_permission_use_settings">Use settings to grant notification permisssion.</string>
+    <string name="button_exit">Exit</string>
+    <string name="button_ok">OK</string>
 </resources>
