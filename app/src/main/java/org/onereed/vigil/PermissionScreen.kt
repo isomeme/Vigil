@@ -1,147 +1,110 @@
 package org.onereed.vigil
 
-import android.app.Activity
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.os.Build
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.shouldShowRationale
 import org.onereed.vigil.common.openSettings
-import org.onereed.vigil.ui.theme.VigilTheme
+import org.onereed.vigil.common.sdkAtLeast
+import org.onereed.vigil.tool.VigilPreview
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionScreen(notificationPermissionState: PermissionState) {
-  // Marked as nullable, but expected to be non-null in runtime app.
-  val activity = LocalActivity.current
-  val permissionActions =
-    remember(notificationPermissionState, activity) {
-      PermissionActions(notificationPermissionState, activity)
-    }
-
-  // Track if the permission request has been processed after user interaction
-  var hasRequestedPermission by rememberSaveable { mutableStateOf(false) }
-  var permissionRequestCompleted by rememberSaveable { mutableStateOf(false) }
-
-  LaunchedEffect(notificationPermissionState.status) {
-    // Check if the permission state has changed after the request
-    if (hasRequestedPermission) {
-      permissionRequestCompleted = true
-    }
+fun PermissionScreen(onPermissionGranted: () -> Unit, onExit: () -> Unit) {
+  if (!sdkAtLeast(Build.VERSION_CODES.TIRAMISU)) {
+    onPermissionGranted()
+    return
   }
 
-  if (permissionRequestCompleted) {
-    if (notificationPermissionState.status.shouldShowRationale) {
-      StatelessPermissionScreen(
-        explanationRes = R.string.notification_permission_rationale,
-        okButtonAction = permissionActions.requestPermission,
-        exitButtonAction = permissionActions.exitApp,
-      )
-    } else {
-      StatelessPermissionScreen(
-        explanationRes = R.string.notification_permission_use_settings,
-        okButtonAction = permissionActions.openSettings,
-        exitButtonAction = permissionActions.exitApp,
-      )
-    }
+  val context = LocalContext.current
+  val activity =
+    LocalActivity.current ?: throw IllegalStateException("PermissionScreen not in Activity")
+
+  val launcher =
+    rememberLauncherForActivityResult(
+      contract = ActivityResultContracts.RequestPermission(),
+      onResult = { isGranted ->
+        if (isGranted) {
+          onPermissionGranted()
+        }
+      },
+    )
+
+  // Request permission automatically when the screen is first shown.
+
+  LaunchedEffect(Unit) { launcher.launch(POST_NOTIFICATIONS) }
+
+  if (activity.shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)) {
+    // User has denied permission at least once. Explain why it's needed.
+
+    StatelessPermissionScreen(
+      explanationRes = R.string.notification_permission_rationale,
+      okButtonAction = { launcher.launch(POST_NOTIFICATIONS) },
+      exitButtonAction = onExit,
+    )
   } else {
-    SideEffect {
-      permissionActions.requestPermission()
-      hasRequestedPermission = true
-    }
+    // User has denied permission permanently, or it's the very first time. The LaunchedEffect
+    // handles the first-time request. If we are still here, it means the user has permanently
+    // denied it, so they must go to settings.
+
+    StatelessPermissionScreen(
+      explanationRes = R.string.notification_permission_use_settings,
+      okButtonAction = context::openSettings,
+      exitButtonAction = onExit,
+    )
   }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun StatelessPermissionScreen(
   @StringRes explanationRes: Int,
   okButtonAction: () -> Unit,
   exitButtonAction: () -> Unit,
 ) {
-  Surface(modifier = Modifier.fillMaxSize()) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-      Column(
-        modifier =
-          Modifier.padding(all = 40.dp)
-            .widthIn(max = 640.dp)
-            .background(MaterialTheme.colorScheme.surfaceContainer)
-            .padding(all = 15.dp)
-            .verticalScroll(rememberScrollState())
-      ) {
-        Text(text = stringResource(explanationRes))
+  Column(
+    modifier =
+      Modifier.padding(all = 40.dp)
+        .widthIn(max = 640.dp)
+        .background(MaterialTheme.colorScheme.surfaceContainer)
+        .padding(all = 15.dp)
+        .verticalScroll(rememberScrollState())
+  ) {
+    Text(text = stringResource(explanationRes))
 
-        Spacer(modifier = Modifier.height(20.dp))
+    Spacer(modifier = Modifier.height(20.dp))
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-          FilledTonalButton(onClick = exitButtonAction) {
-            Text(text = stringResource(R.string.button_exit))
-          }
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+      FilledTonalButton(onClick = exitButtonAction) {
+        Text(text = stringResource(R.string.button_exit))
+      }
 
-          Spacer(modifier = Modifier.padding(horizontal = 20.dp))
+      Spacer(modifier = Modifier.padding(horizontal = 20.dp))
 
-          FilledTonalButton(onClick = okButtonAction) {
-            Text(text = stringResource(R.string.button_ok))
-          }
-        }
+      FilledTonalButton(onClick = okButtonAction) {
+        Text(text = stringResource(R.string.button_ok))
       }
     }
   }
 }
 
-@Immutable
-@OptIn(ExperimentalPermissionsApi::class)
-private data class PermissionActions(
-  val requestPermission: () -> Unit,
-  val openSettings: () -> Unit,
-  val exitApp: () -> Unit,
-) {
-  constructor(
-    permissionState: PermissionState,
-    activity: Activity?,
-  ) : this(
-    requestPermission = permissionState::launchPermissionRequest,
-    openSettings = { activity?.openSettings() },
-    exitApp = { activity?.finishAndRemoveTask() },
-  )
-}
-
 @Preview
 @Composable
-@OptIn(ExperimentalPermissionsApi::class)
 fun PermissionScreenPreview() {
-  VigilTheme {
+  VigilPreview {
     StatelessPermissionScreen(
       explanationRes = R.string.notification_permission_rationale,
       okButtonAction = {},
