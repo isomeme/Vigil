@@ -3,6 +3,7 @@
 package org.onereed.vigil.ui.theme
 
 import android.os.Build
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -263,7 +264,7 @@ val unspecified_scheme =
 
 @Composable
 fun VigilTheme(
-  darkTheme: Boolean = true, // isSystemInDarkTheme(),
+  darkTheme: Boolean = isSystemInDarkTheme(),
   dynamicColor: Boolean = true,
   content: @Composable () -> Unit,
 ) {

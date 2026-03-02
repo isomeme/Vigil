@@ -5,8 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 
-fun Context.openSettings() {
-  val appUri = Uri.fromParts("package", packageName, /* fragment= */ null)
-  val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(appUri)
-  startActivity(intent)
-}
+fun Context.settingsIntent(): Intent =
+  Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+    data = Uri.fromParts("package", packageName, /* fragment= */ null)
+  }

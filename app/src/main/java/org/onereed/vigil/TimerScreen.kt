@@ -7,14 +7,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.onereed.vigil.tool.ThemePreviews
 import org.onereed.vigil.tool.VigilPreview
+import timber.log.Timber
 
 @Composable
 fun TimerScreen(viewModel: TimerViewModel = hiltViewModel()) {
+  Timber.d("TimerScreen")
+
   val seconds by viewModel.timerProgress.collectAsStateWithLifecycle(initialValue = 0)
 
   StatelessTimerScreen(seconds, viewModel::startTimer, viewModel::stopTimer)
@@ -29,7 +32,7 @@ fun StatelessTimerScreen(seconds: Int?, onStartTimer: () -> Unit, onStopTimer: (
   }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 fun TimerScreenPreview() {
   VigilPreview { StatelessTimerScreen(42, {}, {}) }

@@ -20,6 +20,11 @@ constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
   override suspend fun doWork(): Result {
+    // Explicitly call setForeground() to notify UI at the beginning of work.
+    // This is the recommended practice for expedited workers.
+
+    setForeground(getForegroundInfo())
+
     for (i in 0..1_000_000) {
       if (isStopped) break
       delay(1000L)
