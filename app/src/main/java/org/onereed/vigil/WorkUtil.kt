@@ -39,6 +39,7 @@ fun Context.createNotification(): Notification =
     .setContentText("Text!")
     .setSmallIcon(R.drawable.ic_launcher_foreground)
     .setCategory(NotificationCompat.CATEGORY_ALARM)
+    .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
     .setOngoing(true)
     .build()
 
