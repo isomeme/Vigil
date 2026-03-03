@@ -7,14 +7,25 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -38,13 +49,23 @@ fun PermissionScreen(
 
   Timber.d("PermissionScreen")
 
-  // We toggle this value to trigger recomposition after the LaunchedEffect below (possibly)
-  // triggers a permission dialog. Then we can respond to the shouldRequestPermissionRationale()
-  // appropriately. Note that this only matters if the user declined the permission request;
-  // if accepted, recomposition in TopLevelScreen based on the onPermissionGranted() call makes
-  // this path irrelevant.
+  val activity =
+    LocalActivity.current ?: throw IllegalStateException("PermissionScreen not in Activity")
 
-  var hasRequestedPermission by rememberSaveable { mutableStateOf(false) }
+  // We increment requestCount to trigger recomposition after each time a launched permission
+  // request reports that the user denied permission.
+
+  var requestCount by rememberSaveable { mutableIntStateOf(0) }
+  val hasRequestedPermission by remember { derivedStateOf { requestCount > 0 } }
+  val shouldShowRationale =
+    remember(requestCount) { activity.shouldShowRequestPermissionRationale(POST_NOTIFICATIONS) }
+
+  Timber.d(
+    "requestCount: %d, hasRequestedPermission: %b, shouldShowRationale: %b",
+    requestCount,
+    hasRequestedPermission,
+    shouldShowRationale,
+  )
 
   val permissionRequestLauncher =
     rememberLauncherForActivityResult(
@@ -53,7 +74,7 @@ fun PermissionScreen(
         if (isGranted) {
           onPermissionGranted()
         } else {
-          hasRequestedPermission = true
+          requestCount += 1
         }
       },
     )
@@ -62,36 +83,34 @@ fun PermissionScreen(
 
   LaunchedEffect(Unit) { permissionRequestLauncher.launch(POST_NOTIFICATIONS) }
 
-  val activity =
-    LocalActivity.current ?: throw IllegalStateException("PermissionScreen not in Activity")
-  val shouldShowRationale = activity.shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)
+  if (hasRequestedPermission) {
+    if (shouldShowRationale) {
+      // The user has denied permission once when shown the grant-permission dialog without context.
+      // Explain why we need the permission and provide an opportunity to use the dialog again to
+      // grant permission.
 
-  if (shouldShowRationale) {
-    // The user has denied permission when shown the grant-permission dialog without context.
-    // Explain why we need the permission and provide an opportunity to use the dialog again to
-    // grant permission.
+      StatelessPermissionScreen(
+        explanationRes = R.string.notification_permission_rationale,
+        okButtonAction = { permissionRequestLauncher.launch(POST_NOTIFICATIONS) },
+        exitButtonAction = onExit,
+      )
+    } else {
+      // If we have requested permission and shouldShowRationale is false, that means the system
+      // will no longer show them the normal grant-permission dialog. Instead, they must go to the
+      // app's system settings and grant permission "manually".
 
-    StatelessPermissionScreen(
-      explanationRes = R.string.notification_permission_rationale,
-      okButtonAction = { permissionRequestLauncher.launch(POST_NOTIFICATIONS) },
-      exitButtonAction = onExit,
-    )
-  } else if (hasRequestedPermission) {
-    // If we have requested permission and shouldShowRationale is false, that means the system
-    // will no longer show them the normal grant-permission dialog. Instead, they must go to the
-    // app's system settings and grant permission "manually".
-
-    StatelessPermissionScreen(
-      explanationRes = R.string.notification_permission_use_settings,
-      okButtonAction = onOpenSettings,
-      exitButtonAction = onExit,
-    )
+      StatelessPermissionScreen(
+        explanationRes = R.string.notification_permission_use_settings,
+        okButtonAction = onOpenSettings,
+        exitButtonAction = onExit,
+      )
+    }
   }
 
-  // If neither is true, we leave the screen blank. A system permission dialog may appear on top
-  // of this from the LaunchedEffect. Once that runs, either this screen becomes irrelevant, or
-  // the states of shouldShowRationale and hasRequestedPermission will lead to one of the branches
-  // being displayed.
+  // If we have not requested permission, we leave the screen blank. A system permission dialog may
+  // appear on top of this from the LaunchedEffect. Once that runs, either this screen becomes
+  // irrelevant, or the states of hasRequestedPermission and shouldShowRationale will lead to one of
+  // the branches being displayed.
 }
 
 @Composable
