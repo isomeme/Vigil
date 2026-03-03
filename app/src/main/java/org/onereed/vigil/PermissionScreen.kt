@@ -62,32 +62,36 @@ fun PermissionScreen(
 
   LaunchedEffect(Unit) { permissionRequestLauncher.launch(POST_NOTIFICATIONS) }
 
-  // Only render screen elements if we have already tried to request permission.
+  val activity =
+    LocalActivity.current ?: throw IllegalStateException("PermissionScreen not in Activity")
+  val shouldShowRationale = activity.shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)
 
-  if (hasRequestedPermission) {
-    val activity =
-      LocalActivity.current ?: throw IllegalStateException("PermissionScreen not in Activity")
+  if (shouldShowRationale) {
+    // The user has denied permission when shown the grant-permission dialog without context.
+    // Explain why we need the permission and provide an opportunity to use the dialog again to
+    // grant permission.
 
-    if (activity.shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)) {
-      // User has denied permission at least once. Explain why it's needed.
+    StatelessPermissionScreen(
+      explanationRes = R.string.notification_permission_rationale,
+      okButtonAction = { permissionRequestLauncher.launch(POST_NOTIFICATIONS) },
+      exitButtonAction = onExit,
+    )
+  } else if (hasRequestedPermission) {
+    // If we have requested permission and shouldShowRationale is false, that means the system
+    // will no longer show them the normal grant-permission dialog. Instead, they must go to the
+    // app's system settings and grant permission "manually".
 
-      StatelessPermissionScreen(
-        explanationRes = R.string.notification_permission_rationale,
-        okButtonAction = { permissionRequestLauncher.launch(POST_NOTIFICATIONS) },
-        exitButtonAction = onExit,
-      )
-    } else {
-      // User has denied permission permanently, or it's the very first time. The LaunchedEffect
-      // handles the first-time request. If we are still here, it means the user has permanently
-      // denied it, so they must go to settings.
-
-      StatelessPermissionScreen(
-        explanationRes = R.string.notification_permission_use_settings,
-        okButtonAction = onOpenSettings,
-        exitButtonAction = onExit,
-      )
-    }
+    StatelessPermissionScreen(
+      explanationRes = R.string.notification_permission_use_settings,
+      okButtonAction = onOpenSettings,
+      exitButtonAction = onExit,
+    )
   }
+
+  // If neither is true, we leave the screen blank. A system permission dialog may appear on top
+  // of this from the LaunchedEffect. Once that runs, either this screen becomes irrelevant, or
+  // the states of shouldShowRationale and hasRequestedPermission will lead to one of the branches
+  // being displayed.
 }
 
 @Composable
