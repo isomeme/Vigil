@@ -35,17 +35,19 @@ fun TopLevelScreen() {
   val lifecycleOwner = LocalLifecycleOwner.current
 
   var hasNotificationPermission by rememberSaveable {
-    mutableStateOf(checkNotificationPermission(context))
+    mutableStateOf(context.checkNotificationPermission())
   }
 
   // When the user goes to the settings screen to grant notifications permission, this launcher
   // updates the permission state when they return.
 
-  val settingsLauncher =
+  val intentLauncher =
     rememberLauncherForActivityResult(
       contract = ActivityResultContracts.StartActivityForResult(),
-      onResult = { hasNotificationPermission = checkNotificationPermission(context) },
+      onResult = { hasNotificationPermission = context.checkNotificationPermission() },
     )
+
+  fun launchSettings() = intentLauncher.launch(context.settingsIntent())
 
   // When the user navigates away from the app then returns "manually", the observer managed by this
   // DisposableEffect updates the permission state.
@@ -53,7 +55,7 @@ fun TopLevelScreen() {
   DisposableEffect(lifecycleOwner) {
     val observer = LifecycleEventObserver { _, event ->
       if (event == ON_RESUME) {
-        hasNotificationPermission = checkNotificationPermission(context)
+        hasNotificationPermission = context.checkNotificationPermission()
       }
     }
     lifecycleOwner.lifecycle.addObserver(observer)
@@ -70,13 +72,13 @@ fun TopLevelScreen() {
       } else {
         PermissionScreen(
           onPermissionGranted = { hasNotificationPermission = true },
-          onOpenSettings = { settingsLauncher.launch(context.settingsIntent()) },
-        ) { activity?.finish() }
+          onOpenSettings = { launchSettings() },
+          onExit = { activity?.finish() },
+        )
       }
     }
   }
 }
 
 @SuppressLint("InlinedApi") // Permission check always safe.
-private fun checkNotificationPermission(context: Context): Boolean =
-  context.hasPermission(POST_NOTIFICATIONS)
+private fun Context.checkNotificationPermission(): Boolean = hasPermission(POST_NOTIFICATIONS)

@@ -23,6 +23,10 @@ fun VigilPreview(content: @Composable BoxScope.() -> Unit) {
   }
 }
 
-@Preview(name = "Light mode", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)
 @Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
-annotation class ThemePreviews
+annotation class DarkPreview
+
+@Preview(name = "Light mode", uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)
+annotation class LightPreview
+
+@DarkPreview @LightPreview annotation class ThemePreviews

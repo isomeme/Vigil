@@ -1,10 +1,27 @@
 <resources>
     <string name="app_name">Vigil</string>
+
     <string name="timer_channel_name">Timer</string>
     <string name="timer_channel_description">Timer notifications</string>
     <string name="timer_running">Timer running</string>
-    <string name="notification_permission_rationale">Please allow notifications.</string>
-    <string name="notification_permission_use_settings">Use settings to grant notification permisssion.</string>
+
     <string name="button_exit">Exit</string>
     <string name="button_ok">OK</string>
+
+    <string name="notification_permission_rationale">
+        Vigil must send you notifications in order to continue tracking the reminder timer even when
+        the app is not open.
+        \n
+        \nPlease touch the \'OK\' button below, then grant Vigil permission to send you notifications
+        in the resulting Android permission management dialog.
+    </string>
+    <string name="notification_permission_use_settings">
+        Vigil must send you notifications in order to continue tracking the reminder timer even when
+        the app is not open. This is a requirement imposed by Android. The app cannot be used
+        without permission to send you notifications.
+        \n
+        \nThis permission must be granted in the \'Permissions\' section of the app settings. Touch
+        the \'OK\' button below to open the app settings.
+    </string>
+
 </resources>
