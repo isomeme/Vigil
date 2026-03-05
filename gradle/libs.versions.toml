@@ -12,9 +12,9 @@ uiTestManifestVersion = "1.10.4"
 workVersion = "2.11.1"
 
 # Plugin versions
-androidApplicationPluginVersion = "9.0.1"
+androidApplicationPluginVersion = "9.1.0"
 kotlinComposePluginVersion = "2.3.10"
-kspPluginVersion = "2.3.4"
+kspPluginVersion = "2.3.6"
 
 # Versions common across two or more of lib, plugin, and ksp
 androidxHiltCommonVersion = "1.3.0"

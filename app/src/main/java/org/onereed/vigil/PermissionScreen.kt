@@ -10,9 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -122,19 +120,16 @@ fun StatelessPermissionScreen(
         .widthIn(max = 640.dp)
         .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp))
         .padding(all = 15.dp)
-        .verticalScroll(rememberScrollState())
+        .verticalScroll(rememberScrollState()),
+    verticalArrangement = Arrangement.spacedBy(35.dp),
   ) {
     Text(
       text = stringResource(explanationRes),
       color = MaterialTheme.colorScheme.onPrimaryContainer,
     )
 
-    Spacer(modifier = Modifier.height(20.dp))
-
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
       Button(onClick = exitButtonAction) { Text(text = stringResource(R.string.button_exit)) }
-
-      Spacer(modifier = Modifier.padding(horizontal = 20.dp))
 
       Button(onClick = okButtonAction) { Text(text = stringResource(R.string.button_ok)) }
     }
