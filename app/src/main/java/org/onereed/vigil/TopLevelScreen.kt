@@ -2,7 +2,6 @@ package org.onereed.vigil
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,8 +33,15 @@ fun TopLevelScreen() {
   val activity = LocalActivity.current
   val lifecycleOwner = LocalLifecycleOwner.current
 
+  @SuppressLint("InlinedApi") // Permission check always safe.
+  fun checkNotificationPermission(): Boolean = context.hasPermission(POST_NOTIFICATIONS)
+
   var hasNotificationPermission by rememberSaveable {
-    mutableStateOf(context.checkNotificationPermission())
+    mutableStateOf(checkNotificationPermission())
+  }
+
+  fun updateNotificationPermission() {
+    hasNotificationPermission = checkNotificationPermission()
   }
 
   // When the user goes to the settings screen to grant notifications permission, this launcher
@@ -44,7 +50,7 @@ fun TopLevelScreen() {
   val intentLauncher =
     rememberLauncherForActivityResult(
       contract = ActivityResultContracts.StartActivityForResult(),
-      onResult = { hasNotificationPermission = context.checkNotificationPermission() },
+      onResult = { updateNotificationPermission() },
     )
 
   fun launchSettings() = intentLauncher.launch(context.settingsIntent())
@@ -55,7 +61,7 @@ fun TopLevelScreen() {
   DisposableEffect(lifecycleOwner) {
     val observer = LifecycleEventObserver { _, event ->
       if (event == ON_RESUME) {
-        hasNotificationPermission = context.checkNotificationPermission()
+        updateNotificationPermission()
       }
     }
     lifecycleOwner.lifecycle.addObserver(observer)
@@ -79,6 +85,3 @@ fun TopLevelScreen() {
     }
   }
 }
-
-@SuppressLint("InlinedApi") // Permission check always safe.
-private fun Context.checkNotificationPermission(): Boolean = hasPermission(POST_NOTIFICATIONS)

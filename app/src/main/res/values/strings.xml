@@ -8,6 +8,7 @@
     <string name="button_exit">Exit</string>
     <string name="button_ok">OK</string>
 
+    <string name="notification_permission_dialog_title">Permission</string>
     <string name="notification_permission_rationale">
         Vigil must send you notifications in order to continue tracking the reminder timer even when
         the app is not open.

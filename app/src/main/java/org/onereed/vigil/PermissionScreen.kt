@@ -6,19 +6,9 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -27,9 +17,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import org.onereed.vigil.common.sdkAtLeast
 import org.onereed.vigil.tool.DarkPreview
 import org.onereed.vigil.tool.VigilPreview
@@ -114,25 +104,23 @@ fun StatelessPermissionScreen(
   okButtonAction: () -> Unit,
   exitButtonAction: () -> Unit,
 ) {
-  Column(
-    modifier =
-      Modifier.padding(all = 40.dp)
-        .widthIn(max = 640.dp)
-        .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp))
-        .padding(all = 15.dp)
-        .verticalScroll(rememberScrollState()),
-    verticalArrangement = Arrangement.spacedBy(35.dp),
+  // We set the two onDismissRequest callbacks to empty lambdas to make the dialog non-cancelable.
+
+  Dialog(
+    onDismissRequest = {},
+    properties = DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false),
   ) {
-    Text(
-      text = stringResource(explanationRes),
-      color = MaterialTheme.colorScheme.onPrimaryContainer,
+    AlertDialog(
+      onDismissRequest = {},
+      title = { Text(text = stringResource(R.string.notification_permission_dialog_title)) },
+      text = { Text(text = stringResource(explanationRes)) },
+      confirmButton = {
+        TextButton(onClick = okButtonAction) { Text(text = stringResource(R.string.button_ok)) }
+      },
+      dismissButton = {
+        TextButton(onClick = exitButtonAction) { Text(text = stringResource(R.string.button_exit)) }
+      },
     )
-
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-      Button(onClick = exitButtonAction) { Text(text = stringResource(R.string.button_exit)) }
-
-      Button(onClick = okButtonAction) { Text(text = stringResource(R.string.button_ok)) }
-    }
   }
 }
 
