@@ -29,15 +29,13 @@ import timber.log.Timber
 fun PermissionScreen(
   onPermissionGranted: () -> Unit,
   onOpenSettings: () -> Unit,
-  onExit: () -> Unit,
 ) {
   if (!sdkAtLeast(TIRAMISU)) {
     onPermissionGranted()
     return
   }
 
-  val activity =
-    LocalActivity.current ?: throw IllegalStateException("PermissionScreen not in Activity")
+  val activity = LocalActivity.current!!
 
   // We increment requestCount to trigger recomposition after each time a launched permission
   // request reports that the user denied permission.
@@ -76,7 +74,7 @@ fun PermissionScreen(
     StatelessPermissionScreen(
       explanationRes = R.string.notification_permission_rationale,
       okButtonAction = { requestNotificationPermission() },
-      exitButtonAction = onExit,
+      exitButtonAction = activity::finish,
     )
   } else if (hasRequestedPermission) {
     // Android will no longer show the user the normal system permission dialog. Explain that they
@@ -85,7 +83,7 @@ fun PermissionScreen(
     StatelessPermissionScreen(
       explanationRes = R.string.notification_permission_use_settings,
       okButtonAction = onOpenSettings,
-      exitButtonAction = onExit,
+      exitButtonAction = activity::finish,
     )
   } else {
     // The user has not previously been asked to grant the permission. Show them the normal system

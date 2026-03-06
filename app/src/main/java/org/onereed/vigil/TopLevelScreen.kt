@@ -2,7 +2,6 @@ package org.onereed.vigil
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -30,11 +29,10 @@ fun TopLevelScreen() {
   Timber.d("TopLevelScreen")
 
   val context = LocalContext.current
-  val activity = LocalActivity.current
   val lifecycleOwner = LocalLifecycleOwner.current
 
   @SuppressLint("InlinedApi") // Permission check always safe.
-  fun checkNotificationPermission(): Boolean = context.hasPermission(POST_NOTIFICATIONS)
+  fun checkNotificationPermission() = context.hasPermission(POST_NOTIFICATIONS)
 
   var hasNotificationPermission by rememberSaveable {
     mutableStateOf(checkNotificationPermission())
@@ -79,7 +77,6 @@ fun TopLevelScreen() {
         PermissionScreen(
           onPermissionGranted = { hasNotificationPermission = true },
           onOpenSettings = { launchSettings() },
-          onExit = { activity?.finish() },
         )
       }
     }
