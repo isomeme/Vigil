@@ -4,18 +4,16 @@ package org.onereed.vigil.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import org.onereed.vigil.common.sdkAtLeast
 
 private val lightScheme =
   lightColorScheme(
@@ -270,7 +268,7 @@ fun VigilTheme(
 ) {
   val colorScheme =
     when {
-      dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+      dynamicColor && sdkAtLeast(Build.VERSION_CODES.S) -> {
         val context = LocalContext.current
         if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
       }
@@ -279,11 +277,5 @@ fun VigilTheme(
       else -> lightScheme
     }
 
-  // We include a full-screen Surface element as part of the theme wrapper because this is necessary
-  // to enable automatic foreground color selection. It's simpler to do it once here than repeat it
-  // in every root composable.
-
-  MaterialTheme(colorScheme = colorScheme, typography = AppTypography) {
-    Surface(modifier = Modifier.fillMaxSize(), content = content)
-  }
+  MaterialTheme(colorScheme = colorScheme, typography = AppTypography, content = content)
 }

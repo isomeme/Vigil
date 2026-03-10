@@ -1,7 +1,7 @@
 package org.onereed.vigil
 
 import android.Manifest.permission.POST_NOTIFICATIONS
-import android.os.Build.VERSION_CODES.TIRAMISU
+import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,21 +20,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import org.onereed.vigil.common.sdkAtLeast
 import org.onereed.vigil.tool.DarkPreview
 import org.onereed.vigil.tool.VigilPreview
 import timber.log.Timber
 
+@SuppressLint("InlinedApi")
 @Composable
-fun PermissionScreen(
-  onPermissionGranted: () -> Unit,
-  onOpenSettings: () -> Unit,
-) {
-  if (!sdkAtLeast(TIRAMISU)) {
-    onPermissionGranted()
-    return
-  }
-
+fun PermissionScreen(onPermissionGranted: () -> Unit, onOpenSettings: () -> Unit) {
   val activity = LocalActivity.current!!
 
   // We increment requestCount to trigger recomposition after each time a launched permission

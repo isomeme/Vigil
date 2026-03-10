@@ -5,18 +5,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
+import org.onereed.vigil.common.BaseScreen
+import org.onereed.vigil.common.LifecycleLogger
 import org.onereed.vigil.ui.theme.VigilTheme
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+  init {
+    lifecycle.addObserver(LifecycleLogger())
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
-    Timber.d("onCreate")
-
     enableEdgeToEdge()
-    setContent { VigilTheme { TopLevelScreen() } }
+    setContent { VigilTheme { BaseScreen { TopLevelScreen() } } }
   }
 }

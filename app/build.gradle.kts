@@ -72,12 +72,17 @@ dependencies {
   // AndroidX and Compose
 
   implementation(libs.activityComposeLib)
+  implementation(libs.collectionKtxLib)
   implementation(libs.coreKtxLib)
   implementation(libs.lifecycleLib)
   implementation(libs.workLib)
 
   implementation(platform(libs.composeBomLib))
   implementation(libs.bundles.composeBomRuntime)
+
+  // Guava
+
+  implementation(libs.guavaLib)
 
   // Logging
 
