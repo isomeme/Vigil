@@ -14,6 +14,10 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 @ChecksSdkIntAtLeast(parameter = 0)
 fun sdkAtLeast(version: Int): Boolean = Build.VERSION.SDK_INT >= version
 
+/**
+ * Returns true if we either don't need the permission at the current build version, or have the
+ * permission thanks to explicit user assent.
+ */
 fun Context.hasPermission(permission: String): Boolean {
   val minSdk =
     permissionToMinSdk[permission]

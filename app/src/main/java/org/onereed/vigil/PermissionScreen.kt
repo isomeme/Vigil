@@ -20,13 +20,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import org.onereed.vigil.common.openSettings
 import org.onereed.vigil.tool.DarkPreview
 import org.onereed.vigil.tool.VigilPreview
 import timber.log.Timber
 
 @SuppressLint("InlinedApi")
 @Composable
-fun PermissionScreen(onPermissionGranted: () -> Unit, onOpenSettings: () -> Unit) {
+fun PermissionScreen(onPermissionGranted: () -> Unit) {
+  Timber.d("PermissionScreen start")
+
   val activity = LocalActivity.current!!
 
   // We increment requestCount to trigger recomposition after each time a launched permission
@@ -38,7 +41,7 @@ fun PermissionScreen(onPermissionGranted: () -> Unit, onOpenSettings: () -> Unit
     remember(requestCount) { activity.shouldShowRequestPermissionRationale(POST_NOTIFICATIONS) }
 
   Timber.d(
-    "requestCount: %d, hasRequestedPermission: %b, shouldShowRationale: %b",
+    "requestCount = %d, hasRequestedPermission = %b, shouldShowRationale = %b",
     requestCount,
     hasRequestedPermission,
     shouldShowRationale,
@@ -74,7 +77,7 @@ fun PermissionScreen(onPermissionGranted: () -> Unit, onOpenSettings: () -> Unit
 
     StatelessPermissionScreen(
       explanationRes = R.string.notification_permission_use_settings,
-      okButtonAction = onOpenSettings,
+      okButtonAction = activity::openSettings,
       exitButtonAction = activity::finish,
     )
   } else {

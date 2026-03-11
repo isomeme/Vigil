@@ -2,8 +2,6 @@ package org.onereed.vigil
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -15,60 +13,56 @@ import androidx.lifecycle.Lifecycle.Event.ON_RESUME
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.onereed.vigil.common.hasPermission
-import org.onereed.vigil.common.settingsIntent
 import timber.log.Timber
 
 @Composable
 fun TopLevelScreen() {
+  Timber.d("TopLevelScreen start")
+
   val context = LocalContext.current
   val lifecycleOwner = LocalLifecycleOwner.current
 
-  fun checkNotificationPermission(): Boolean {
+  fun checkPerm(): Boolean {
     @SuppressLint("InlinedApi") // Permission check always safe.
     val hasPerm = context.hasPermission(POST_NOTIFICATIONS)
-    Timber.d("checkNotificationPermission: %b", hasPerm)
+    Timber.d("checkPerm = %b", hasPerm)
     return hasPerm
   }
 
-  var hasNotificationPermission by rememberSaveable {
-    mutableStateOf(checkNotificationPermission())
+  var hasPerm by rememberSaveable {
+    Timber.d("remember")
+    mutableStateOf(checkPerm())
   }
 
-  Timber.d("TopLevelScreen: hasNotificationPermission = %b", hasNotificationPermission)
+  Timber.d("top hasPerm = %b", hasPerm)
 
-  fun updateNotificationPermission() {
-    hasNotificationPermission = checkNotificationPermission()
-    Timber.d("updateNotificationPermission: %b", hasNotificationPermission)
+  fun updatePerm() {
+    Timber.d("updatePerm")
+    hasPerm = checkPerm()
   }
 
-  // When the user goes to the settings screen to grant notifications permission, this launcher
-  // updates the permission state when they return.
+  fun grantPerm() {
+    Timber.d("grantPerm")
+    hasPerm = true
+  }
 
-  val intentLauncher =
-    rememberLauncherForActivityResult(
-      contract = ActivityResultContracts.StartActivityForResult(),
-      onResult = { updateNotificationPermission() },
-    )
-
-  // When the user navigates away from the app then returns "manually", the observer managed by this
+  // When the user navigates away from the app then returns, the observer managed by this
   // DisposableEffect updates the permission state.
 
   DisposableEffect(lifecycleOwner) {
     val observer = LifecycleEventObserver { _, event ->
       if (event == ON_RESUME) {
-        updateNotificationPermission()
+        Timber.d("lifecycle")
+        updatePerm()
       }
     }
     lifecycleOwner.lifecycle.addObserver(observer)
     onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
   }
 
-  if (hasNotificationPermission) {
+  if (hasPerm) {
     TimerScreen()
   } else {
-    PermissionScreen(
-      onPermissionGranted = { hasNotificationPermission = true },
-      onOpenSettings = { intentLauncher.launch(context.settingsIntent()) },
-    )
+    PermissionScreen(onPermissionGranted = ::grantPerm)
   }
 }
