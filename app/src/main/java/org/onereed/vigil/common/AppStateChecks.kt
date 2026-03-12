@@ -1,7 +1,6 @@
 package org.onereed.vigil.common
 
 import android.Manifest.permission.POST_NOTIFICATIONS
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
@@ -14,18 +13,8 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 @ChecksSdkIntAtLeast(parameter = 0)
 fun sdkAtLeast(version: Int): Boolean = Build.VERSION.SDK_INT >= version
 
-/**
- * Returns true if we either don't need the permission at the current build version, or have the
- * permission thanks to explicit user assent.
- */
-fun Context.hasPermission(permission: String): Boolean {
-  val minSdk =
-    permissionToMinSdk[permission]
-      ?: throw IllegalArgumentException("No minSdk for permission '$permission'")
+fun Context.hasUserPermission(permission: String): Boolean =
+  checkSelfPermission(this, permission) == PERMISSION_GRANTED
 
-  return !sdkAtLeast(minSdk) || checkSelfPermission(this, permission) == PERMISSION_GRANTED
-}
-
-@SuppressLint("InlinedApi")
-private val permissionToMinSdk: Map<String, Int> =
-  mapOf(POST_NOTIFICATIONS to VERSION_CODES.TIRAMISU)
+fun Context.hasPostNotificationsPermission(): Boolean =
+  !sdkAtLeast(VERSION_CODES.TIRAMISU) || hasUserPermission(POST_NOTIFICATIONS)

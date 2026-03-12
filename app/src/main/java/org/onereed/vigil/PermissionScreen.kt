@@ -33,19 +33,24 @@ fun PermissionScreen(onPermissionGranted: () -> Unit) {
   val activity = LocalActivity.current!!
 
   // We increment requestCount to trigger recomposition after each time a launched permission
-  // request reports that the user denied permission.
+  // request reports that the user denied permission. This provides the "heartbeat" that triggers
+  // requestMode state machine changes. Note that sending the user to the system settings to
+  // manually grant permission does not result in an increment of requestCount, so no further
+  // recompositions occur once we reach that state.
 
   var requestCount by rememberSaveable { mutableIntStateOf(0) }
-  val hasRequestedPermission by remember { derivedStateOf { requestCount > 0 } }
-  val shouldShowRationale =
-    remember(requestCount) { activity.shouldShowRequestPermissionRationale(POST_NOTIFICATIONS) }
+  val requestMode by remember {
+    derivedStateOf {
+      when {
+        activity.shouldShowRequestPermissionRationale(POST_NOTIFICATIONS) ->
+          RequestMode.SHOW_RATIONALE
+        requestCount > 0 -> RequestMode.SEND_TO_SETTINGS
+        else -> RequestMode.ASK_DIRECTLY
+      }
+    }
+  }
 
-  Timber.d(
-    "requestCount = %d, hasRequestedPermission = %b, shouldShowRationale = %b",
-    requestCount,
-    hasRequestedPermission,
-    shouldShowRationale,
-  )
+  LaunchedEffect(key1 = requestMode) { Timber.d("Δ requestMode -> %s", requestMode) }
 
   val permissionRequestLauncher =
     rememberLauncherForActivityResult(
@@ -59,43 +64,43 @@ fun PermissionScreen(onPermissionGranted: () -> Unit) {
       },
     )
 
-  fun requestNotificationPermission() = permissionRequestLauncher.launch(POST_NOTIFICATIONS)
+  when (requestMode) {
+    RequestMode.ASK_DIRECTLY ->
+      // The user has not previously been asked to grant the permission. Show them the normal system
+      // permission dialog over an otherwise blank screen. The launch callback is guaranteed to
+      // either (1) trigger a TopLevelScreen recomposition that makes this screen irrelevant, or
+      // (2) update requestCount in a way that makes this state unreachable.
 
-  if (shouldShowRationale) {
-    // The user has denied the permission previously, but Android will still show them the normal
-    // system permission dialog. Explain why we need the permission, and provide an opportunity to
-    // grant it.
+      LaunchedEffect(Unit) { permissionRequestLauncher.launch(POST_NOTIFICATIONS) }
 
-    StatelessPermissionScreen(
-      explanationRes = R.string.notification_permission_rationale,
-      okButtonAction = { requestNotificationPermission() },
-      exitButtonAction = activity::finish,
-    )
-  } else if (hasRequestedPermission) {
-    // Android will no longer show the user the normal system permission dialog. Explain that they
-    // can grant the permission in the app's settings, and provide an opportunity to go there.
+    RequestMode.SHOW_RATIONALE ->
+      // The user has denied the permission previously, but Android will still show them the normal
+      // system permission dialog. Explain why we need the permission, and provide an opportunity to
+      // grant it.
 
-    StatelessPermissionScreen(
-      explanationRes = R.string.notification_permission_use_settings,
-      okButtonAction = activity::openSettings,
-      exitButtonAction = activity::finish,
-    )
-  } else {
-    // The user has not previously been asked to grant the permission. Show them the normal system
-    // permission dialog over an otherwise blank screen. The launch callback is guaranteed to
-    // either (1) trigger a TopLevelScreen recomposition that makes this screen irrelevant, or
-    // (2) update a state variable that triggers a recomposition of this screen with
-    // hasRequestedPermission set to true, making this block unreachable.
+      StatelessPermissionScreen(
+        explanationRes = R.string.notification_permission_rationale,
+        onOk = { permissionRequestLauncher.launch(POST_NOTIFICATIONS) },
+        onExit = activity::finish,
+      )
 
-    LaunchedEffect(Unit) { requestNotificationPermission() }
+    RequestMode.SEND_TO_SETTINGS ->
+      // Android will no longer show the user the normal system permission dialog. Explain that they
+      // can grant the permission in the app's settings, and provide an opportunity to go there.
+
+      StatelessPermissionScreen(
+        explanationRes = R.string.notification_permission_use_settings,
+        onOk = activity::openSettings,
+        onExit = activity::finish,
+      )
   }
 }
 
 @Composable
 fun StatelessPermissionScreen(
   @StringRes explanationRes: Int,
-  okButtonAction: () -> Unit,
-  exitButtonAction: () -> Unit,
+  onOk: () -> Unit,
+  onExit: () -> Unit,
 ) {
   // We set the two onDismissRequest callbacks to empty lambdas to make the dialog non-cancelable.
 
@@ -108,13 +113,19 @@ fun StatelessPermissionScreen(
       title = { Text(text = stringResource(R.string.notification_permission_dialog_title)) },
       text = { Text(text = stringResource(explanationRes)) },
       confirmButton = {
-        TextButton(onClick = okButtonAction) { Text(text = stringResource(R.string.button_ok)) }
+        TextButton(onClick = onOk) { Text(text = stringResource(R.string.button_ok)) }
       },
       dismissButton = {
-        TextButton(onClick = exitButtonAction) { Text(text = stringResource(R.string.button_exit)) }
+        TextButton(onClick = onExit) { Text(text = stringResource(R.string.button_exit)) }
       },
     )
   }
+}
+
+private enum class RequestMode {
+  ASK_DIRECTLY,
+  SHOW_RATIONALE,
+  SEND_TO_SETTINGS,
 }
 
 @DarkPreview
@@ -123,8 +134,8 @@ fun PermissionScreenPreview() {
   VigilPreview {
     StatelessPermissionScreen(
       explanationRes = R.string.notification_permission_rationale,
-      okButtonAction = {},
-      exitButtonAction = {},
+      onOk = {},
+      onExit = {},
     )
   }
 }

@@ -1,15 +1,14 @@
 package org.onereed.vigil
 
-import android.Manifest.permission.POST_NOTIFICATIONS
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import org.onereed.vigil.common.hasPermission
+import org.onereed.vigil.common.hasPostNotificationsPermission
 import timber.log.Timber
 
 @Composable
@@ -18,18 +17,17 @@ fun TopLevelScreen() {
 
   val context = LocalContext.current
 
-  @SuppressLint("InlinedApi") // Permission check always safe.
-  fun checkPerm() = context.hasPermission(POST_NOTIFICATIONS)
-
   var hasPerm by remember {
-    val initPerm = checkPerm()
-    Timber.d("remember: initPerm = %b", initPerm)
-    mutableStateOf(initPerm)
+    mutableStateOf(context.hasPostNotificationsPermission())
+  }
+
+  LaunchedEffect(key1 = hasPerm) {
+    Timber.d("Δ hasPerm -> %b", hasPerm)
   }
 
   LifecycleResumeEffect(Unit) {
-    hasPerm = checkPerm()
-    Timber.d("LifecycleResumeEffect: hasPerm = %b", hasPerm)
+    Timber.d("LifecycleResumeEffect")
+    hasPerm = context.hasPostNotificationsPermission()
     onPauseOrDispose {}
   }
 
