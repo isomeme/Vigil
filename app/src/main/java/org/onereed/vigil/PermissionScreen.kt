@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -39,8 +38,9 @@ fun PermissionScreen(onPermissionGranted: () -> Unit) {
   // recompositions occur once we reach that state.
 
   var requestCount by rememberSaveable { mutableIntStateOf(0) }
-  val requestMode by remember {
-    derivedStateOf {
+  val requestMode =
+    remember(requestCount) {
+      Timber.d("Determining requestMode")
       when {
         activity.shouldShowRequestPermissionRationale(POST_NOTIFICATIONS) ->
           RequestMode.SHOW_RATIONALE
@@ -48,8 +48,8 @@ fun PermissionScreen(onPermissionGranted: () -> Unit) {
         else -> RequestMode.ASK_DIRECTLY
       }
     }
-  }
 
+  LaunchedEffect(key1 = requestCount) { Timber.d("Δ requestCount -> %d", requestCount) }
   LaunchedEffect(key1 = requestMode) { Timber.d("Δ requestMode -> %s", requestMode) }
 
   val permissionRequestLauncher =
