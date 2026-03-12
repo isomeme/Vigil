@@ -39,7 +39,7 @@ hiltCompilerKspLib = { module = "androidx.hilt:hilt-compiler", version.ref = "an
 hiltNavigationComposeLib = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHiltCommonVersion" }
 hiltWorkLib = { module = "androidx.hilt:hilt-work", version.ref = "androidxHiltCommonVersion" }
 junitLib = { module = "junit:junit", version.ref = "junitVersion" }
-lifecycleLib = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleVersion" }
+lifecycleLib = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleVersion" }
 timberLib = { module = "com.jakewharton.timber:timber", version.ref = "timberVersion" }
 uiTestManifestLib = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifestVersion" }
 workLib = { module = "androidx.work:work-runtime-ktx", version.ref = "workVersion" }

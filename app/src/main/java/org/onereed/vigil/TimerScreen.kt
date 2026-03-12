@@ -16,7 +16,7 @@ import timber.log.Timber
 
 @Composable
 fun TimerScreen(viewModel: TimerViewModel = hiltViewModel()) {
-  Timber.d("TimerScreen")
+  Timber.d("TimerScreen start")
 
   val seconds by viewModel.timerProgress.collectAsStateWithLifecycle(initialValue = 0)
 
