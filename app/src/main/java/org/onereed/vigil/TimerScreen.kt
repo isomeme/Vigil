@@ -24,7 +24,7 @@ fun TimerScreen(viewModel: TimerViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun StatelessTimerScreen(seconds: Int?, onStartTimer: () -> Unit, onStopTimer: () -> Unit) {
+private fun StatelessTimerScreen(seconds: Int?, onStartTimer: () -> Unit, onStopTimer: () -> Unit) {
   Column(verticalArrangement = Arrangement.spacedBy(20.dp), horizontalAlignment = Alignment.Start) {
     Text("Timer: $seconds")
     Button(onClick = onStartTimer) { Text("Start") }
@@ -34,6 +34,4 @@ fun StatelessTimerScreen(seconds: Int?, onStartTimer: () -> Unit, onStopTimer: (
 
 @DarkPreview
 @Composable
-fun TimerScreenPreview() {
-  VigilPreview { StatelessTimerScreen(42, {}, {}) }
-}
+private fun TimerScreenPreview() = VigilPreview { StatelessTimerScreen(42, {}, {}) }

@@ -1,11 +1,8 @@
 package org.onereed.vigil
 
-import android.Manifest.permission.POST_NOTIFICATIONS
-import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.StringRes
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -16,41 +13,41 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import org.onereed.vigil.common.openSettings
+import org.onereed.vigil.common.settingsIntent
 import org.onereed.vigil.tool.DarkPreview
 import org.onereed.vigil.tool.VigilPreview
 import timber.log.Timber
 
-@SuppressLint("InlinedApi")
 @Composable
-fun PermissionScreen(onPermissionGranted: () -> Unit) {
+fun PermissionScreen(
+  permission: String,
+  rationaleText: String,
+  settingsText: String,
+  onPermissionGranted: () -> Unit,
+  onDismiss: () -> Unit,
+) {
   Timber.d("PermissionScreen start")
 
+  val context = LocalContext.current
   val activity = LocalActivity.current!!
 
-  // We increment requestCount to trigger recomposition after each time a launched permission
-  // request reports that the user denied permission. This provides the "heartbeat" that triggers
-  // requestMode state machine changes. Note that sending the user to the system settings to
-  // manually grant permission does not result in an increment of requestCount, so no further
-  // recompositions occur once we reach that state.
+  // We increment requestCount to trigger recomposition after each time a launched user interaction
+  // returns to this composable without the user having granted permission. This provides the
+  // "heartbeat" that triggers requestMode state machine changes.
 
   var requestCount by rememberSaveable { mutableIntStateOf(0) }
   val requestMode =
     remember(requestCount) {
-      Timber.d("Determining requestMode")
       when {
-        activity.shouldShowRequestPermissionRationale(POST_NOTIFICATIONS) ->
-          RequestMode.SHOW_RATIONALE
+        activity.shouldShowRequestPermissionRationale(permission) -> RequestMode.SHOW_RATIONALE
         requestCount > 0 -> RequestMode.SEND_TO_SETTINGS
         else -> RequestMode.ASK_DIRECTLY
       }
     }
-
-  LaunchedEffect(key1 = requestCount) { Timber.d("Δ requestCount -> %d", requestCount) }
-  LaunchedEffect(key1 = requestMode) { Timber.d("Δ requestMode -> %s", requestMode) }
 
   val permissionRequestLauncher =
     rememberLauncherForActivityResult(
@@ -64,6 +61,12 @@ fun PermissionScreen(onPermissionGranted: () -> Unit) {
       },
     )
 
+  val settingsLauncher =
+    rememberLauncherForActivityResult(
+      contract = ActivityResultContracts.StartActivityForResult(),
+      onResult = { requestCount += 1 },
+    )
+
   when (requestMode) {
     RequestMode.ASK_DIRECTLY ->
       // The user has not previously been asked to grant the permission. Show them the normal system
@@ -71,7 +74,7 @@ fun PermissionScreen(onPermissionGranted: () -> Unit) {
       // either (1) trigger a TopLevelScreen recomposition that makes this screen irrelevant, or
       // (2) update requestCount in a way that makes this state unreachable.
 
-      LaunchedEffect(Unit) { permissionRequestLauncher.launch(POST_NOTIFICATIONS) }
+      LaunchedEffect(Unit) { permissionRequestLauncher.launch(permission) }
 
     RequestMode.SHOW_RATIONALE ->
       // The user has denied the permission previously, but Android will still show them the normal
@@ -79,9 +82,9 @@ fun PermissionScreen(onPermissionGranted: () -> Unit) {
       // grant it.
 
       StatelessPermissionScreen(
-        explanationRes = R.string.notification_permission_rationale,
-        onOk = { permissionRequestLauncher.launch(POST_NOTIFICATIONS) },
-        onExit = activity::finish,
+        text = rationaleText,
+        onConfirm = { permissionRequestLauncher.launch(permission) },
+        onDismiss = onDismiss,
       )
 
     RequestMode.SEND_TO_SETTINGS ->
@@ -89,19 +92,18 @@ fun PermissionScreen(onPermissionGranted: () -> Unit) {
       // can grant the permission in the app's settings, and provide an opportunity to go there.
 
       StatelessPermissionScreen(
-        explanationRes = R.string.notification_permission_use_settings,
-        onOk = activity::openSettings,
-        onExit = activity::finish,
+        text = settingsText,
+        onConfirm = { settingsLauncher.launch(context.settingsIntent()) },
+        onDismiss = onDismiss,
       )
   }
+
+  LaunchedEffect(key1 = requestCount) { Timber.d("Δ requestCount -> %d", requestCount) }
+  LaunchedEffect(key1 = requestMode) { Timber.d("Δ requestMode -> %s", requestMode) }
 }
 
 @Composable
-fun StatelessPermissionScreen(
-  @StringRes explanationRes: Int,
-  onOk: () -> Unit,
-  onExit: () -> Unit,
-) {
+private fun StatelessPermissionScreen(text: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
   // We set the two onDismissRequest callbacks to empty lambdas to make the dialog non-cancelable.
 
   Dialog(
@@ -110,13 +112,12 @@ fun StatelessPermissionScreen(
   ) {
     AlertDialog(
       onDismissRequest = {},
-      title = { Text(text = stringResource(R.string.notification_permission_dialog_title)) },
-      text = { Text(text = stringResource(explanationRes)) },
+      text = { Text(text = text) },
       confirmButton = {
-        TextButton(onClick = onOk) { Text(text = stringResource(R.string.button_ok)) }
+        TextButton(onClick = onConfirm) { Text(text = stringResource(android.R.string.ok)) }
       },
       dismissButton = {
-        TextButton(onClick = onExit) { Text(text = stringResource(R.string.button_exit)) }
+        TextButton(onClick = onDismiss) { Text(text = stringResource(android.R.string.cancel)) }
       },
     )
   }
@@ -130,12 +131,6 @@ private enum class RequestMode {
 
 @DarkPreview
 @Composable
-fun PermissionScreenPreview() {
-  VigilPreview {
-    StatelessPermissionScreen(
-      explanationRes = R.string.notification_permission_rationale,
-      onOk = {},
-      onExit = {},
-    )
-  }
+private fun PermissionScreenPreview() = VigilPreview {
+  StatelessPermissionScreen(text = "Explanation", onConfirm = {}, onDismiss = {})
 }

@@ -1,6 +1,5 @@
 package org.onereed.vigil.common
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,7 +9,3 @@ fun Context.settingsIntent(): Intent =
   Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
     data = Uri.fromParts("package", packageName, /* fragment= */ null)
   }
-
-fun Activity.openSettings() {
-  startActivity(settingsIntent())
-}
