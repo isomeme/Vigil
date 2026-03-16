@@ -2,7 +2,6 @@
 
 package org.onereed.vigil.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -13,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import org.onereed.vigil.common.sdkAtLeast
+import org.onereed.vigil.common.dynamicThemeSupported
 
 private val lightScheme =
   lightColorScheme(
@@ -268,7 +267,7 @@ fun VigilTheme(
 ) {
   val colorScheme =
     when {
-      dynamicColor && sdkAtLeast(Build.VERSION_CODES.S) -> {
+      dynamicColor && dynamicThemeSupported -> {
         val context = LocalContext.current
         if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
       }

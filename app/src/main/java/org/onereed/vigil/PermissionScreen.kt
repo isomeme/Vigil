@@ -30,7 +30,7 @@ fun PermissionScreen(
   onPermissionGranted: () -> Unit,
   onDismiss: () -> Unit,
 ) {
-  Timber.d("PermissionScreen start")
+  Timber.d("permission = $permission")
 
   val context = LocalContext.current
   val activity = LocalActivity.current!!
@@ -98,8 +98,8 @@ fun PermissionScreen(
       )
   }
 
-  LaunchedEffect(key1 = requestCount) { Timber.d("Δ requestCount -> %d", requestCount) }
-  LaunchedEffect(key1 = requestMode) { Timber.d("Δ requestMode -> %s", requestMode) }
+  LaunchedEffect(key1 = requestCount) { Timber.d("Δ requestCount -> $requestCount") }
+  LaunchedEffect(key1 = requestMode) { Timber.d("Δ requestMode -> $requestMode") }
 }
 
 @Composable

@@ -45,5 +45,5 @@ fun TopLevelScreen() {
     onPauseOrDispose {}
   }
 
-  LaunchedEffect(key1 = hasPerm) { Timber.d("Δ hasPerm -> %b", hasPerm) }
+  LaunchedEffect(key1 = hasPerm) { Timber.d("Δ hasPerm -> $hasPerm") }
 }
