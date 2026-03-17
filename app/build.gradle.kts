@@ -1,5 +1,5 @@
 plugins {
-  alias(libs.plugins.androidApplicationPlugin)
+  id(libs.plugins.androidApplicationPlugin.get().pluginId)
   alias(libs.plugins.hiltAndroidPlugin)
   alias(libs.plugins.kotlinComposePlugin)
   alias(libs.plugins.kspPlugin)
@@ -63,6 +63,10 @@ dependencies {
   // Required for Java 8+ APIs on API levels < 33
 
   coreLibraryDesugaring(libs.desugarLib)
+
+  // Shared org.onereed library
+
+  implementation(project(":Shared:app"))
 
   // Hilt
 
