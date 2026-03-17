@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
   repositories {
     google {
@@ -11,6 +13,7 @@ pluginManagement {
     gradlePluginPortal()
   }
 }
+
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
   repositories {
@@ -19,7 +22,6 @@ dependencyResolutionManagement {
   }
 
   versionCatalogs {
-    // Name this something unique for your submodule
     create("sharedLibs") {
       from(files("submodules/Shared/gradle/libs.versions.toml"))
     }
