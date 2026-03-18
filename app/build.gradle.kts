@@ -7,7 +7,7 @@ plugins {
 
 android {
   namespace = "org.onereed.vigil"
-  compileSdk { version = release(36) }
+  compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   defaultConfig {
     applicationId = "org.onereed.vigil"
@@ -64,9 +64,9 @@ dependencies {
 
   coreLibraryDesugaring(libs.desugarLib)
 
-  // Shared org.onereed library
+  // org.onereed.shared library
 
-  implementation(project(":Shared:app"))
+  implementation(project(":Shared"))
 
   // Hilt
 

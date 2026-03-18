@@ -32,7 +32,4 @@ rootProject.name = "Vigil"
 include(":app")
 
 include(":Shared")
-project(":Shared").projectDir = file("submodules/Shared")
-
-include(":Shared:app")
-project(":Shared:app").projectDir = file("submodules/Shared/app")
+project(":Shared").projectDir = file("submodules/Shared/app")
