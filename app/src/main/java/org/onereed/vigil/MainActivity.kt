@@ -5,15 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
+import org.onereed.shared.logging.LifecycleLogger
 import org.onereed.vigil.common.BaseScreen
-import org.onereed.vigil.common.LifecycleLogger.addLogger
 import org.onereed.vigil.ui.theme.VigilTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
   init {
-    lifecycle.addLogger()
+    lifecycle.addObserver(LifecycleLogger())
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import org.onereed.shared.settingsIntent
+import org.onereed.shared.navigation.settingsIntent
 import org.onereed.vigil.tool.DarkPreview
 import org.onereed.vigil.tool.VigilPreview
 import timber.log.Timber
