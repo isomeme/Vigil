@@ -4,12 +4,25 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/submodules/Shared" name="Shared">
+                <projects>
+                  <project path="$PROJECT_DIR$/submodules/Shared" />
+                  <project path="$PROJECT_DIR$/submodules/Shared/app" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="testRunner" value="CHOOSE_PER_TEST" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/submodules/Shared" />
             <option value="$PROJECT_DIR$/submodules/Shared/app" />
           </set>
         </option>

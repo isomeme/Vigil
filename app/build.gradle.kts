@@ -7,14 +7,15 @@ plugins {
 
 android {
   namespace = "org.onereed.vigil"
-  compileSdk { version = release(36) { minorApiLevel = 1 } }
+  compileSdk { version = release(37) { minorApiLevel = 1 } }
 
   defaultConfig {
     applicationId = "org.onereed.vigil"
-    minSdk = 26
-    targetSdk = 36
     versionCode = 1
     versionName = "1.0"
+
+    minSdk = 26
+    targetSdk = 37
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -61,12 +62,17 @@ android {
 dependencies {
 
   // Required for Java 8+ APIs on API levels < 33
-
   coreLibraryDesugaring(libs.desugarLib)
 
-  // org.onereed.shared library
+  // Compose BOM
+  // See https://www.reddit.com/r/AndroidStudio/comments/1vnjxv4/comment/p3mmorh/
+  @Suppress("AvoidDuplicateDependencies")
+  implementation(platform(libs.composeBomLib))
+  @Suppress("AvoidDuplicateDependencies")
+  androidTestImplementation(platform(libs.composeBomLib))
 
-  implementation(project(":Shared"))
+  // org.onereed.shared library
+  implementation(libs.onereedShared)
 
   // Hilt
 
@@ -80,8 +86,6 @@ dependencies {
   implementation(libs.coreKtxLib)
   implementation(libs.lifecycleLib)
   implementation(libs.workLib)
-
-  implementation(platform(libs.composeBomLib))
   implementation(libs.bundles.composeBomRuntime)
 
   // Guava
@@ -96,7 +100,6 @@ dependencies {
 
   testImplementation(libs.junitLib)
 
-  androidTestImplementation(platform(libs.composeBomLib))
   androidTestImplementation(libs.espressoCoreLib)
   androidTestImplementation(libs.androidxJunitLib)
   androidTestImplementation(libs.uiTestJunit4Lib)
