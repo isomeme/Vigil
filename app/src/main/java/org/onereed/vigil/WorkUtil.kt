@@ -8,7 +8,7 @@ import android.content.pm.ServiceInfo
 import android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE
 import androidx.core.app.NotificationCompat
 import androidx.work.ForegroundInfo
-import org.onereed.vigil.common.sdkAtLeast
+import org.onereed.shared.sysinfo.sdkAtLeast
 
 fun Context.createNotificationChannel() {
   val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

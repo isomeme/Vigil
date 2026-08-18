@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import org.onereed.vigil.common.dynamicThemeSupported
+import org.onereed.shared.sysinfo.dynamicThemeSupported
 
 private val lightScheme =
   lightColorScheme(
