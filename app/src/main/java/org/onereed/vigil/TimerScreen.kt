@@ -21,6 +21,8 @@ fun TimerScreen(viewModel: TimerViewModel = hiltViewModel()) {
   val seconds by viewModel.timerProgress.collectAsStateWithLifecycle(initialValue = 0)
 
   StatelessTimerScreen(seconds, viewModel::startTimer, viewModel::stopTimer)
+
+  Timber.d("TimerScreen end")
 }
 
 @Composable
