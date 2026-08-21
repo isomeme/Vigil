@@ -9,6 +9,7 @@ import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 @HiltWorker
 class TimerWorker
@@ -27,7 +28,7 @@ constructor(
 
     for (i in 0..1_000_000) {
       if (isStopped) break
-      delay(1000L)
+      delay(1.seconds)
       // Update progress for UI observation
       setProgress(workDataOf("seconds" to i))
     }

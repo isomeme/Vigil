@@ -10,32 +10,34 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import org.onereed.shared.permission.hasPermission
+import org.onereed.shared.screen.PermissionScreen
 import timber.log.Timber
 
 @Composable
 @SuppressLint("InlinedApi") // POST_NOTIFICATIONS protected by hasPerm processing
 fun TopLevelScreen() {
-  Timber.d("TopLevelScreen start")
+  Timber.d("Start")
 
   val context = LocalContext.current
   val activity = LocalActivity.current!!
 
   var hasPerm by remember { mutableStateOf(context.hasPermission(POST_NOTIFICATIONS)) }
 
+  LaunchedEffect(key1 = hasPerm) { Timber.d("Δ hasPerm -> $hasPerm") }
+
   if (hasPerm) {
     TimerScreen()
   } else {
     @SuppressLint("InlinedApi") // POST_NOTIFICATIONS protected by hasPerm processing
-    PermissionScreen(
-      permission = POST_NOTIFICATIONS,
-      rationaleText = stringResource(R.string.notification_permission_rationale),
-      settingsText = stringResource(R.string.notification_permission_use_settings),
-      onPermissionGranted = { hasPerm = true },
-      onDismiss = activity::finish,
-    )
+    (PermissionScreen(
+        permission = POST_NOTIFICATIONS,
+        rationaleId = R.string.notification_permission_rationale,
+        settingsId = R.string.notification_permission_use_settings,
+        onPermissionGranted = { hasPerm = true },
+        onDismiss = activity::finish,
+    ))
   }
 
   // When the user changes app permissions using system settings while the app is closed, this
@@ -46,7 +48,5 @@ fun TopLevelScreen() {
     onPauseOrDispose {}
   }
 
-  LaunchedEffect(key1 = hasPerm) { Timber.d("Δ hasPerm -> $hasPerm") }
-
-  Timber.d("TopLevelScreen end")
+  Timber.d("End")
 }

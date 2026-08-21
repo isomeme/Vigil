@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.onereed.vigil.tool.DarkPreview
+import org.onereed.shared.tool.DarkPreview
 import org.onereed.vigil.tool.VigilPreview
 import timber.log.Timber
 
