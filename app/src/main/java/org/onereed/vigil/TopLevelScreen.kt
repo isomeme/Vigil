@@ -30,14 +30,13 @@ fun TopLevelScreen() {
   if (hasPerm) {
     TimerScreen()
   } else {
-    @SuppressLint("InlinedApi") // POST_NOTIFICATIONS protected by hasPerm processing
-    (PermissionScreen(
+    PermissionScreen(
         permission = POST_NOTIFICATIONS,
         rationaleId = R.string.notification_permission_rationale,
         settingsId = R.string.notification_permission_use_settings,
         onPermissionGranted = { hasPerm = true },
         onDismiss = activity::finish,
-    ))
+    )
   }
 
   // When the user changes app permissions using system settings while the app is closed, this
