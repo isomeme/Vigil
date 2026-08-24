@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.onereed.shared.tool.DarkPreview
-import org.onereed.vigil.tool.VigilPreview
+import org.onereed.vigil.common.VigilFrame
 import timber.log.Timber
 
 @Composable
@@ -36,4 +36,4 @@ private fun StatelessTimerScreen(seconds: Int?, onStartTimer: () -> Unit, onStop
 
 @DarkPreview
 @Composable
-private fun TimerScreenPreview() = VigilPreview { StatelessTimerScreen(42, {}, {}) }
+private fun TimerScreenFrame() = VigilFrame { StatelessTimerScreen(42, {}, {}) }

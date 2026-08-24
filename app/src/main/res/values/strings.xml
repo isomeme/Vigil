@@ -11,7 +11,7 @@
     </string>
     <string name="notification_permission_use_settings">
         Vigil needs to send you notifications to run and display the timer when the app is closed.
-        Please enable them in Settings.
+        Please manually enable them in Settings.
     </string>
 
 </resources>
