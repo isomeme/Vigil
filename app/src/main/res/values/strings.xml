@@ -5,13 +5,15 @@
     <string name="timer_channel_description">Timer notifications</string>
     <string name="timer_running">Timer running</string>
 
+    <string name="allow_notifications">Allow notifications</string>
+    <string name="notifications_permission_required">Notifications permission required</string>
     <string name="notification_permission_rationale">
         Vigil needs to send you notifications to run and display the timer when the app is closed.
         Please grant permission.
     </string>
     <string name="notification_permission_use_settings">
         Vigil needs to send you notifications to run and display the timer when the app is closed.
-        Please manually enable them in Settings.
+        Please manually allow notifications in Settings.
     </string>
 
 </resources>

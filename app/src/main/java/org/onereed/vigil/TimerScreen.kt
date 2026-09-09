@@ -16,13 +16,13 @@ import timber.log.Timber
 
 @Composable
 fun TimerScreen(viewModel: TimerViewModel = hiltViewModel()) {
-  Timber.d("TimerScreen start")
+  Timber.d("Start")
 
   val seconds by viewModel.timerProgress.collectAsStateWithLifecycle(initialValue = 0)
 
   StatelessTimerScreen(seconds, viewModel::startTimer, viewModel::stopTimer)
 
-  Timber.d("TimerScreen end")
+  Timber.d("End")
 }
 
 @Composable
@@ -36,4 +36,4 @@ private fun StatelessTimerScreen(seconds: Int?, onStartTimer: () -> Unit, onStop
 
 @DarkPreview
 @Composable
-private fun TimerScreenFrame() = VigilFrame { StatelessTimerScreen(42, {}, {}) }
+private fun TimerScreenPreview() = VigilFrame { StatelessTimerScreen(42, {}, {}) }

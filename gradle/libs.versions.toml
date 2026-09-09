@@ -6,7 +6,7 @@ collectionKtxVersion = "1.6.0"
 coreKtxVersion = "1.19.0"
 desugarVersion = "2.1.5"
 espressoCoreVersion = "3.7.0"
-guavaVersion = "33.6.0-android"
+guavaVersion = "33.7.1-android"
 junitVersion = "4.13.2"
 lifecycleVersion = "2.11.0"
 onereedSharedVersion = "1.0"
@@ -15,8 +15,8 @@ uiTestManifestVersion = "1.12.0"
 workVersion = "2.11.2"
 
 # Plugin versions
-androidApplicationPluginVersion = "9.3.1"
-kotlinComposePluginVersion = "2.4.10"
+androidApplicationPluginVersion = "9.4.0"
+kotlinComposePluginVersion = "2.4.20"
 kspPluginVersion = "2.3.11"
 
 # Versions common across two or more of lib, plugin, and ksp
